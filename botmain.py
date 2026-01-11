@@ -2,9 +2,11 @@ import discord
 import random
 import asyncio
 import json
+import os
+from dotenv import load_dotenv
 
-# Replace with your own token (ugh)
-TOKEN = 'YOUR_DISCORD_BOT_TOKEN_HERE'
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
 
 # Intents because bots aren't allowed to have fun without permission
 intents = discord.Intents.default()
