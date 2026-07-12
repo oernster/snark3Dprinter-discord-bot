@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>PrinterShameBot: a snarky 3D-printer Discord bot | !printquote</title>
+    <meta name="description" content="PrinterShameBot is a self-hosted Discord bot that answers !printquote with a snarky 3D-printing put-down. 442 snark lines and 28 IT Crowd quotes, open source under GPL-3.0.">
+    <meta name="keywords" content="PrinterShameBot, Discord bot, 3D printing, printquote, snark bot, 3D printer humour, Voron, discord.py, self-hosted discord bot, open source discord bot">
+    <meta name="author" content="Oliver Ernster">
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+    <meta name="googlebot" content="index, follow, max-image-preview:large">
+    <link rel="canonical" href="https://oernster.github.io/snark3Dprinter-discord-bot/">
+
+    <!-- Theme / identity -->
+    <meta name="theme-color" content="#0f0a0a">
+    <meta name="color-scheme" content="dark">
+    <meta name="application-name" content="PrinterShameBot">
+    <meta name="apple-mobile-web-app-title" content="PrinterShameBot">
+    <meta name="format-detection" content="telephone=no">
+
+    <!-- Icons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="icon-16.png">
+    <link rel="apple-touch-icon" href="icon-180.png">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="PrinterShameBot: a snarky 3D-printer Discord bot">
+    <meta property="og:description" content="Answers !printquote with a snarky 3D-printing put-down. 442 snark lines and 28 IT Crowd quotes, open source and self-hosted.">
+    <meta property="og:image" content="https://oernster.github.io/snark3Dprinter-discord-bot/og.png">
+    <meta property="og:image:type" content="image/png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="PrinterShameBot logo: a molten-orange chat-bubble app tile beside the name and the !printquote command">
+    <meta property="og:url" content="https://oernster.github.io/snark3Dprinter-discord-bot/">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="PrinterShameBot">
+    <meta property="og:locale" content="en_GB">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="PrinterShameBot: a snarky 3D-printer Discord bot">
+    <meta name="twitter:description" content="Answers !printquote with a snarky 3D-printing put-down. Open source and self-hosted.">
+    <meta name="twitter:image" content="https://oernster.github.io/snark3Dprinter-discord-bot/og.png">
+    <meta name="twitter:image:alt" content="PrinterShameBot logo">
+
+    <style>
+        :root {
+            --bg: #0f0a0a;
+            --panel: #1a1210;
+            --panel-2: #140d0c;
+            --text: #f5efeb;
+            --muted: #b7a69f;
+            --faint: #7d6d67;
+            --border: #2c1f1c;
+            --border-strong: #402d28;
+            --molten: #ff7847;
+            --molten-hi: #ff9264;
+            --lava: #d62828;
+            --blurple: #5865F2;
+            --ok: #57F287;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background:
+                radial-gradient(1200px 400px at 50% 120%, rgba(214,40,40,0.18), transparent 70%),
+                var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 72px 20px 64px;
+            text-align: center;
+        }
+
+        .hero-icon {
+            display: block;
+            width: 120px;
+            height: 120px;
+            border-radius: 27px;
+            margin: 0 auto 24px;
+            box-shadow: 0 20px 50px rgba(214, 40, 40, 0.35), 0 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        .badge {
+            display: flex;
+            width: fit-content;
+            align-items: center;
+            gap: 8px;
+            font-size: 12.5px;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            color: var(--molten);
+            border: 1px solid var(--border);
+            border-radius: 999px;
+            padding: 6px 14px;
+            margin: 0 auto 20px;
+        }
+
+        .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--molten); }
+
+        h1 {
+            font-size: 46px;
+            margin: 0 0 14px;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(90deg, var(--molten-hi), var(--lava));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .subtitle { font-size: 18px; color: var(--muted); margin: 0 auto 28px; max-width: 720px; }
+        .subtitle strong { color: var(--text); }
+
+        .actions a {
+            display: inline-block;
+            margin: 8px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease, filter 0.15s ease;
+        }
+
+        .primary { color: #1a0d08; background: linear-gradient(90deg, var(--molten-hi), var(--lava)); }
+        .primary:hover { transform: translateY(-1px); filter: brightness(1.06); }
+
+        .secondary { border: 1px solid var(--border-strong); color: var(--text); }
+        .secondary:hover { border-color: var(--molten); transform: translateY(-1px); }
+
+        .minor-detail { margin-top: 24px; font-size: 14px; color: var(--faint); }
+        .minor-detail code {
+            font-family: Consolas, "Cascadia Mono", monospace;
+            color: var(--molten-hi);
+            background: #0b0605;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1px 6px;
+        }
+
+        /* Discord-style chat mock */
+        .chat {
+            max-width: 520px;
+            margin: 40px auto 0;
+            background: #0b0806;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 18px 18px 20px;
+            text-align: left;
+            box-shadow: 0 24px 60px rgba(0,0,0,0.5);
+        }
+
+        .chat-head {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--faint);
+            padding-bottom: 12px;
+            margin-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .chan { color: var(--muted); font-weight: 700; }
+        .chan::before { content: "# "; color: var(--faint); }
+
+        .msg { display: flex; gap: 12px; padding: 8px 4px; }
+
+        .avatar {
+            flex: 0 0 auto;
+            width: 40px; height: 40px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            font-weight: 800;
+            font-size: 15px;
+            color: #fff;
+        }
+        .avatar.user { background: #3b6ea5; }
+        .avatar.bot { background: linear-gradient(135deg, var(--molten-hi), var(--lava)); }
+
+        .msg-body { min-width: 0; }
+        .msg-name { font-weight: 700; font-size: 14px; color: #e7ddd8; }
+        .msg-name .tag {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.03em;
+            text-transform: uppercase;
+            color: #fff;
+            background: var(--blurple);
+            border-radius: 4px;
+            padding: 1px 5px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+        .msg-name .time { font-weight: 400; font-size: 11px; color: var(--faint); margin-left: 8px; }
+        .msg-text { font-size: 15px; color: #cdbfb8; margin-top: 2px; }
+        .msg-text.cmd { font-family: Consolas, "Cascadia Mono", monospace; color: var(--molten-hi); }
+        .msg-text.snark { color: #f0e6e1; }
+
+        .section { margin-top: 48px; }
+        .section h2 { font-size: 24px; margin: 0 0 10px; font-weight: 700; letter-spacing: -0.01em; }
+        .section .lead { color: var(--muted); max-width: 720px; margin: 0 auto 8px; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-top: 28px;
+            text-align: left;
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: border-color 0.15s ease, transform 0.15s ease;
+        }
+        .card:hover { border-color: var(--molten); transform: translateY(-2px); }
+        .card h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; color: var(--molten-hi); }
+        .card p { margin: 0; font-size: 14px; color: var(--muted); }
+
+        /* Snark taste */
+        .quotes {
+            max-width: 820px;
+            margin: 28px auto 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 14px;
+            text-align: left;
+        }
+        .quote {
+            background: var(--panel-2);
+            border: 1px solid var(--border);
+            border-left: 3px solid var(--molten);
+            border-radius: 10px;
+            padding: 16px 18px;
+            font-size: 15px;
+            color: #ece0da;
+        }
+        .quote.itc { border-left-color: var(--blurple); }
+        .quote .who { display: block; margin-top: 8px; font-size: 12px; color: var(--faint); font-style: normal; }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            max-width: 720px;
+            margin: 28px auto 0;
+        }
+        .stat {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 22px 16px;
+        }
+        .stat .num {
+            font-size: 34px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--molten-hi), var(--lava));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .stat .label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+        .steps {
+            max-width: 720px;
+            margin: 28px auto 0;
+            text-align: left;
+            counter-reset: step;
+            list-style: none;
+            padding: 0;
+        }
+        .steps li {
+            position: relative;
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px 20px 16px 62px;
+            margin-bottom: 12px;
+            color: var(--muted);
+            font-size: 15px;
+        }
+        .steps li strong { color: var(--text); }
+        .steps li::before {
+            counter-increment: step;
+            content: counter(step);
+            position: absolute;
+            left: 16px; top: 50%;
+            transform: translateY(-50%);
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            display: grid; place-items: center;
+            font-weight: 800; font-size: 14px;
+            color: #1a0d08;
+            background: linear-gradient(90deg, var(--molten-hi), var(--lava));
+        }
+
+        code {
+            font-family: Consolas, "Cascadia Mono", monospace;
+            background: #0b0605;
+            color: #ffb089;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1px 6px;
+            font-size: 13px;
+        }
+
+        .prose { max-width: 720px; margin: 0 auto; text-align: left; }
+        .prose p { color: var(--muted); margin: 0 0 14px; }
+        .prose strong { color: var(--text); }
+
+        .faq { max-width: 760px; margin: 28px auto 0; text-align: left; }
+        .faq-item {
+            background: var(--panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 18px 20px;
+            margin-bottom: 12px;
+        }
+        .faq-item h3 { margin: 0 0 6px; font-size: 16px; font-weight: 600; }
+        .faq-item p { margin: 0; font-size: 14px; color: var(--muted); }
+        .faq-item a { color: var(--molten-hi); text-decoration: none; }
+        .faq-item a:hover { text-decoration: underline; }
+
+        footer {
+            margin-top: 52px;
+            padding: 28px 20px 8px;
+            border-top: 1px solid var(--border);
+            color: var(--faint);
+            font-size: 13px;
+        }
+        footer a { color: var(--muted); text-decoration: none; }
+        footer a:hover { color: var(--molten-hi); }
+
+        .sr-only {
+            position: absolute; width: 1px; height: 1px;
+            padding: 0; margin: -1px; overflow: hidden;
+            clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="hero">
+        <img src="icon-180.png" class="hero-icon" width="120" height="120"
+             alt="PrinterShameBot app tile: a molten-orange chat bubble" fetchpriority="high" decoding="async">
+
+        <div class="badge"><span class="badge-dot"></span> Discord bot · self-hosted · open source</div>
+
+        <h1>PrinterShameBot</h1>
+
+        <p class="subtitle">
+            A Discord bot that <strong>spits shame like molten lava</strong>. Type
+            <strong style="color:var(--molten-hi)">!printquote</strong> in any channel it can read and it fires
+            back a snarky 3D-printing put-down, with the occasional IT Crowd line for good measure.
+        </p>
+
+        <div class="actions">
+            <a class="primary" href="https://github.com/oernster/snark3Dprinter-discord-bot">Get the code</a>
+            <a class="secondary" href="#setup">How to run it</a>
+        </div>
+
+        <p class="minor-detail">
+            Free and open source under GPL-3.0. Runs on your own machine with your own bot token; no hosted service to sign up for.
+        </p>
+
+        <!-- Discord-style chat mock -->
+        <div class="chat" aria-label="Example of the bot responding in a Discord channel">
+            <div class="chat-head"><span class="chan">printer-fails</span> &nbsp;·&nbsp; 3 members</div>
+
+            <div class="msg">
+                <div class="avatar user">V</div>
+                <div class="msg-body">
+                    <div class="msg-name">VoronVictim <span class="time">Today at 21:14</span></div>
+                    <div class="msg-text cmd">!printquote</div>
+                </div>
+            </div>
+
+            <div class="msg">
+                <div class="avatar bot">P</div>
+                <div class="msg-body">
+                    <div class="msg-name">PrinterShameBot <span class="tag">Bot</span> <span class="time">Today at 21:14</span></div>
+                    <div class="msg-text snark">Your stringing has formed a web of lies and broken promises.</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- Snark taste -->
+        <section class="section" id="taste" aria-labelledby="taste-h">
+            <h2 id="taste-h">A taste of the shame</h2>
+            <p class="lead">Real lines from the bot's repertoire. Roughly three in four replies are pure 3D-printing snark; the rest are IT Crowd.</p>
+
+            <div class="quotes">
+                <div class="quote">You printed a hairball with structural ambition.<span class="who">snark</span></div>
+                <div class="quote">You adjusted retraction distance? How brave. How utterly useless.<span class="who">snark</span></div>
+                <div class="quote">The nozzle is so clingy, it should come with a restraining order.<span class="who">snark</span></div>
+                <div class="quote">Your support interface layers are thicker than plot armor.<span class="who">snark</span></div>
+                <div class="quote itc">Have you tried turning it off and on again?<span class="who">IT Crowd</span></div>
+                <div class="quote itc">People. What a bunch of bastards.<span class="who">IT Crowd</span></div>
+            </div>
+        </section>
+
+        <!-- By the numbers -->
+        <section class="section" id="numbers" aria-labelledby="numbers-h">
+            <h2 id="numbers-h">By the numbers</h2>
+            <div class="stats">
+                <div class="stat"><div class="num">442</div><div class="label">snark lines</div></div>
+                <div class="stat"><div class="num">28</div><div class="label">IT Crowd quotes</div></div>
+                <div class="stat"><div class="num">75 / 25</div><div class="label">snark to IT Crowd odds</div></div>
+                <div class="stat"><div class="num">1</div><div class="label">command to remember</div></div>
+            </div>
+        </section>
+
+        <!-- How it works -->
+        <section class="section" id="how" aria-labelledby="how-h">
+            <h2 id="how-h">How it works</h2>
+            <p class="lead">Small, honest and dependency-light. One command, one job.</p>
+
+            <div class="grid">
+                <div class="card">
+                    <h3>One command</h3>
+                    <p>Send <code>!printquote</code> in any channel where the bot can read and send messages. That is the whole interface.</p>
+                </div>
+                <div class="card">
+                    <h3>Weighted randomness</h3>
+                    <p>Each call rolls the dice: about 75% of the time you get a 3D-printing snark line, otherwise an IT Crowd quote.</p>
+                </div>
+                <div class="card">
+                    <h3>Quotes live in JSON</h3>
+                    <p>All lines sit in <code>quotes.json</code> under <code>snark</code> and <code>it_crowd</code> keys, so extending the bot is editing a text file, not the code.</p>
+                </div>
+                <div class="card">
+                    <h3>Built on discord.py</h3>
+                    <p>A single small Python script using the message-content intent. No database, no web server, nothing to babysit.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Setup -->
+        <section class="section" id="setup" aria-labelledby="setup-h">
+            <h2 id="setup-h">Run it yourself</h2>
+            <p class="lead">PrinterShameBot is code you host, not a hosted service. You will need a Discord application and bot token from the Discord Developer Portal.</p>
+
+            <ol class="steps">
+                <li>Create an application and a bot in the <strong>Discord Developer Portal</strong>, and enable the <strong>Message Content Intent</strong>.</li>
+                <li>Clone the repo, create a Python environment and <code>pip install discord.py python-dotenv</code>.</li>
+                <li>Put your bot token in a <code>.env</code> file as <strong><code>DISCORD_TOKEN</code></strong>, next to <code>botmain.py</code> and <code>quotes.json</code>.</li>
+                <li>Invite the bot to your server with read and send message permissions, run <code>python botmain.py</code>, then try <code>!printquote</code>.</li>
+            </ol>
+
+            <div class="actions" style="margin-top:28px;">
+                <a class="primary" href="https://github.com/oernster/snark3Dprinter-discord-bot">Full source and instructions</a>
+            </div>
+        </section>
+
+        <!-- Why -->
+        <section class="section" id="why" aria-labelledby="why-h">
+            <h2 id="why-h">Why it exists</h2>
+            <div class="prose">
+                <p>
+                    Every 3D-printing Discord has that channel full of failed prints, spaghetti, warped corners and
+                    heroic first layers that gave up halfway. Those failures deserve commentary.
+                </p>
+                <p>
+                    So PrinterShameBot is a small pressure valve for the group chat: one command that produces a fresh
+                    put-down on demand, no moderation required. It pairs nicely with
+                    <a href="https://oernster.github.io/3D-printing-info/">the wider 3D-printing knowledge base</a>,
+                    one repo tells you how to fix the print, this one mocks it first.
+                </p>
+            </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="section" id="faq" aria-labelledby="faq-h">
+            <h2 id="faq-h">Frequently asked questions</h2>
+            <div class="faq">
+                <div class="faq-item">
+                    <h3>Can I just click a link to add it to my server?</h3>
+                    <p>No. PrinterShameBot is self-hosted open-source code rather than a public hosted bot, so you run your own instance with your own token. The setup takes a few minutes and is described above and in the repo.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>How do I trigger it?</h3>
+                    <p>Send <code>!printquote</code> in any channel the bot can read and post in. It replies with a random snark or IT Crowd line.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Can I add my own quotes?</h3>
+                    <p>Yes. Edit <code>quotes.json</code> and add lines to the <code>snark</code> or <code>it_crowd</code> arrays. Restart the bot and they are in the pool.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Is it free?</h3>
+                    <p>Yes. It is free and open source under the GNU GPL-3.0 licence.</p>
+                </div>
+                <div class="faq-item">
+                    <h3>Is it mean?</h3>
+                    <p>Affectionately. It is aimed at friends who print together; keep it to channels where everyone is in on the joke.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <p class="sr-only">
+        PrinterShameBot is a free, open-source, self-hosted Discord bot for 3D-printing communities. Sending the
+        command !printquote returns a random snarky 3D-printing put-down about 75% of the time and an IT Crowd
+        quote the rest of the time, drawn from 442 snark lines and 28 IT Crowd quotes stored in a quotes.json file.
+        It is a small Python script built on discord.py using the message content intent, with no database or web
+        server, and is run on your own machine with your own Discord bot token. Released under the GPL-3.0 licence.
+    </p>
+
+    <footer>
+        Created by Oliver Ernster &nbsp;·&nbsp; Python and discord.py &nbsp;·&nbsp;
+        <a href="https://github.com/oernster/snark3Dprinter-discord-bot/blob/main/LICENSE">GPL-3.0</a> &nbsp;·&nbsp;
+        <a href="https://github.com/oernster/snark3Dprinter-discord-bot">Source on GitHub</a> &nbsp;·&nbsp;
+        <a href="https://oernster.github.io/3D-printing-info/">3D-printing-info</a>
+    </footer>
+
+</div>
+
+<script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@graph": [
+        {
+            "@type": "WebSite",
+            "@id": "https://oernster.github.io/snark3Dprinter-discord-bot/#website",
+            "url": "https://oernster.github.io/snark3Dprinter-discord-bot/",
+            "name": "PrinterShameBot",
+            "description": "A self-hosted, open-source Discord bot that answers !printquote with a snarky 3D-printing put-down.",
+            "inLanguage": "en-GB",
+            "publisher": { "@id": "https://oernster.github.io/snark3Dprinter-discord-bot/#oliver" }
+        },
+        {
+            "@type": "Person",
+            "@id": "https://oernster.github.io/snark3Dprinter-discord-bot/#oliver",
+            "name": "Oliver Ernster",
+            "url": "https://www.crankthecode.com",
+            "sameAs": [
+                "https://github.com/oernster",
+                "https://www.crankthecode.com"
+            ]
+        },
+        {
+            "@type": "SoftwareApplication",
+            "@id": "https://oernster.github.io/snark3Dprinter-discord-bot/#app",
+            "name": "PrinterShameBot",
+            "applicationCategory": "CommunicationApplication",
+            "applicationSubCategory": "Discord bot",
+            "operatingSystem": "Any (Python 3)",
+            "description": "A self-hosted Discord bot that responds to the !printquote command with a random snarky 3D-printing put-down or IT Crowd quote. Built on discord.py with quotes stored in a JSON file.",
+            "url": "https://oernster.github.io/snark3Dprinter-discord-bot/",
+            "downloadUrl": "https://github.com/oernster/snark3Dprinter-discord-bot",
+            "softwareHelp": "https://github.com/oernster/snark3Dprinter-discord-bot#readme",
+            "inLanguage": "en-GB",
+            "image": "https://oernster.github.io/snark3Dprinter-discord-bot/og.png",
+            "isAccessibleForFree": true,
+            "license": "https://www.gnu.org/licenses/gpl-3.0.html",
+            "author": { "@id": "https://oernster.github.io/snark3Dprinter-discord-bot/#oliver" },
+            "creator": { "@id": "https://oernster.github.io/snark3Dprinter-discord-bot/#oliver" },
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "GBP" },
+            "featureList": [
+                "!printquote command returns a random snarky reply",
+                "442 snark lines and 28 IT Crowd quotes",
+                "Roughly 75% snark, 25% IT Crowd weighting",
+                "Quotes stored in an editable quotes.json file",
+                "Built on discord.py with the message content intent",
+                "Self-hosted, no database or web server",
+                "Free and open source under GPL-3.0"
+            ]
+        },
+        {
+            "@type": "FAQPage",
+            "@id": "https://oernster.github.io/snark3Dprinter-discord-bot/#faq",
+            "mainEntity": [
+                {
+                    "@type": "Question",
+                    "name": "Can I just click a link to add it to my server?",
+                    "acceptedAnswer": { "@type": "Answer", "text": "No. PrinterShameBot is self-hosted open-source code rather than a public hosted bot, so you run your own instance with your own token. The setup takes a few minutes and is described in the repo." }
+                },
+                {
+                    "@type": "Question",
+                    "name": "How do I trigger it?",
+                    "acceptedAnswer": { "@type": "Answer", "text": "Send !printquote in any channel the bot can read and post in. It replies with a random snark or IT Crowd line." }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Can I add my own quotes?",
+                    "acceptedAnswer": { "@type": "Answer", "text": "Yes. Edit quotes.json and add lines to the snark or it_crowd arrays, then restart the bot and they are in the pool." }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Is it free?",
+                    "acceptedAnswer": { "@type": "Answer", "text": "Yes. It is free and open source under the GNU GPL-3.0 licence." }
+                },
+                {
+                    "@type": "Question",
+                    "name": "Is it mean?",
+                    "acceptedAnswer": { "@type": "Answer", "text": "Affectionately. It is aimed at friends who print together; keep it to channels where everyone is in on the joke." }
+                }
+            ]
+        }
+    ]
+}
+</script>
+
+</body>
+</html>
