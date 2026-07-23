@@ -322,6 +322,8 @@
         .prose { max-width: 720px; margin: 0 auto; text-align: left; }
         .prose p { color: var(--muted); margin: 0 0 14px; }
         .prose strong { color: var(--text); }
+        .prose a { color: var(--molten-hi); text-decoration: none; }
+        .prose a:hover { text-decoration: underline; }
 
         .faq { max-width: 760px; margin: 28px auto 0; text-align: left; }
         .faq-item {
@@ -462,7 +464,7 @@
             <p class="lead">PrinterShameBot is code you host, not a hosted service. You will need a Discord application and bot token from the Discord Developer Portal.</p>
 
             <ol class="steps">
-                <li>Create an application and a bot in the <strong>Discord Developer Portal</strong>, and enable the <strong>Message Content Intent</strong>.</li>
+                <li>Create an application and a bot in the <strong>Discord Developer Portal</strong>, then enable the <strong>Message Content Intent</strong>.</li>
                 <li>Clone the repo, create a Python environment and <code>pip install discord.py python-dotenv</code>.</li>
                 <li>Put your bot token in a <code>.env</code> file as <strong><code>DISCORD_TOKEN</code></strong>, next to <code>botmain.py</code> and <code>quotes.json</code>.</li>
                 <li>Invite the bot to your server with read and send message permissions, run <code>python botmain.py</code>, then try <code>!printquote</code>.</li>
@@ -475,7 +477,7 @@
 
         <!-- Why -->
         <section class="section" id="why" aria-labelledby="why-h">
-            <h2 id="why-h">Why it exists</h2>
+            <h2 id="why-h">Why this exists</h2>
             <div class="prose">
                 <p>
                     Every 3D-printing Discord has that channel full of failed prints, spaghetti, warped corners and
@@ -484,8 +486,13 @@
                 <p>
                     So PrinterShameBot is a small pressure valve for the group chat: one command that produces a fresh
                     put-down on demand, no moderation required. It pairs nicely with
-                    <a href="https://ernster.dev/3D-printing-info/">the wider 3D-printing knowledge base</a>,
+                    <a href="https://ernster.dev/3D-printing-info/">the wider 3D-printing knowledge base</a>;
                     one repo tells you how to fix the print, this one mocks it first.
+                </p>
+                <p>
+                    The real point sits under the joke: a bot is an interface, a way of wrapping practical automation
+                    with enough personality to make it delightful. This one is a friendly proof of that idea.
+                    Full reasoning at <a href="https://www.crankthecode.com/posts/bots">crankthecode.com</a>.
                 </p>
             </div>
         </section>
@@ -524,7 +531,7 @@
         command !printquote returns a random snarky 3D-printing put-down about 75% of the time and an IT Crowd
         quote the rest of the time, drawn from 442 snark lines and 28 IT Crowd quotes stored in a quotes.json file.
         It is a small Python script built on discord.py using the message content intent, with no database or web
-        server, and is run on your own machine with your own Discord bot token. Released under the GPL-3.0 licence.
+        server; it runs on your own machine with your own Discord bot token. Released under the GPL-3.0 licence.
     </p>
 
     <footer>
