@@ -65,6 +65,7 @@ def _import_botmain_fresh():
     spec.loader.exec_module(module)
     return module
 
+
 @pytest.fixture(autouse=True)
 def _fake_discord_module():
     """Ensure `import botmain` never tries to import real discord.py during tests."""
@@ -76,7 +77,9 @@ def botmain_module():
     return _import_botmain_fresh()
 
 
-def test_load_quotes_missing_file_returns_empty_lists_and_prints(botmain_module, monkeypatch):
+def test_load_quotes_missing_file_returns_empty_lists_and_prints(
+    botmain_module, monkeypatch
+):
     def _raise_fnf(*args, **kwargs):
         raise FileNotFoundError
 
@@ -90,13 +93,17 @@ def test_load_quotes_missing_file_returns_empty_lists_and_prints(botmain_module,
     assert "quotes.json is missing" in buf.getvalue()
 
 
-def test_load_quotes_invalid_json_returns_empty_lists_and_prints(botmain_module, monkeypatch):
+def test_load_quotes_invalid_json_returns_empty_lists_and_prints(
+    botmain_module, monkeypatch
+):
     # Exercise the JSONDecodeError branch.
     monkeypatch.setattr("builtins.open", lambda *a, **k: io.StringIO("not-json"))
     monkeypatch.setattr(
         botmain_module.json,
         "load",
-        lambda *_a, **_k: (_ for _ in ()).throw(botmain_module.json.JSONDecodeError("x", "y", 0)),
+        lambda *_a, **_k: (_ for _ in ()).throw(
+            botmain_module.json.JSONDecodeError("x", "y", 0)
+        ),
     )
 
     buf = io.StringIO()
@@ -205,4 +212,3 @@ def test_on_message_fallback_quote_when_key_missing(botmain_module, monkeypatch)
 
     asyncio.run(botmain_module.on_message(msg))
     assert channel.sent == ["Your JSON is empty. Shame."]
-
